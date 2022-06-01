@@ -1,2 +1,2 @@
 Deep Racer Competition at DTCC
-- version 1 breakdown
+- version 2 breakdown
