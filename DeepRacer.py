@@ -39,25 +39,18 @@ def reward_function(params):
     # Account for coming to finish
     if closest_waypoints[1] + 1 < len(waypoints):
         third_waypoint = waypoints[closest_waypoints[1] + 1]
-        # if closest_waypoints[1] + 2 < len(waypoints):
-        # fourth_waypoint = waypoints[closest_waypoints[1] + 2]
-        # else:
-        # fourth_waypoint = waypoints[0]
     else:
         third_waypoint = waypoints[0]
-        # fourth_waypoint = waypoints[1]
     next_waypoint = waypoints[closest_waypoints[1]]
     last_waypoint = waypoints[closest_waypoints[0]]
 
     # Calculate the direction using arctan
     next_direction = math.atan2(next_waypoint[1] - last_waypoint[1], next_waypoint[0] - last_waypoint[0])
     third_direction = math.atan2(third_waypoint[1] - last_waypoint[1], third_waypoint[0] - last_waypoint[0])
-    # future_direction = math.atan2(third_waypoint[1] - next_waypoint[1], third_waypoint[0] - next_waypoint[0])
 
     # Calculate degree needed
     next_direction = math.degrees(next_direction)
     third_direction = math.degrees(third_direction)
-    # future_direction = math.degrees(future_direction)
 
     # Average degree
     track_direction = (next_direction + third_direction) / 2
@@ -75,34 +68,12 @@ def reward_function(params):
     # Steering Angle Reward
     steering_reward = (1 - ((abs(steering_angle - direction_diff)) / 180)) * steering_weight
 
-    # Calculate future next to check if necessary to slow down
-    # future_next_direction = math.atan2(fourth_waypoint[1] - last_waypoint[1], fourth_waypoint[0] - last_waypoint[0])
-    # future_next_direction = math.degrees(future_next_direction)
-    # future_direction_diff = abs(future_next_direction - direction_diff)
-
-    # Account of other direction of track
-    # if future_direction_diff > 180:
-    #     future_direction_diff = 360 - future_direction_diff
-
-    # Set lower speed threshold if future turn is big
-    # if future_direction_diff > 5:
-    #     speed_threshold *= 0.56
-
-    # Speed reward
-    # Account for speed below threshold and lowering speed to prepare for a turn
     min_speed = 0.75
     max_speed = 4
-    throttle = (speed - min_speed) / (max_speed - min_speed)
-    if throttle > speed_threshold:
+
+    if speed > speed_threshold:
         speed_weight = speed_weight + 50
 
     speed_reward = (1 - (max_speed - (speed - min_speed))) * speed_weight
-    # if speed < speed_threshold:
-    #     speed_weight = (max_speed - (speed_threshold - speed)) / (max_speed - min_speed) * 50
-    # else:
-    #     speed_weight = (speed_weight + (speed - speed_threshold )) / (max_speed - min_speed) * 50
-    # speed_reward = ((speed / max_speed) ** 3) \
-    # max_speed * (speed *10) + weight_speed
-    #     #(math.pow(speed, 2) - min_speed) / (max_speed - min_speed) * speed_weight
 
     return center_reward + speed_reward + steering_reward + direction_reward + progress
